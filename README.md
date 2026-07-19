@@ -1,20 +1,23 @@
-# Virtual Camera Lab v1.0.1 — Image Loading Fix
+# Virtual Camera Academy v2.2
 
-Upload every file in this folder directly into the root of your GitHub repository.
+This GitHub Pages version adds:
 
-Required files:
+- Six structured lessons
+- Beginner, intermediate and advanced filters
+- Step-by-step instructions and hints
+- Pass mark, retry system and three-star scoring
+- Timed challenges
+- Saved lesson progress using browser local storage
+- Captured-photo gallery saved on the device
+- Rule-based instructor feedback
+- Embedded AI-created scenes with no image folder required
+
+Upload these three files to the root of the GitHub repository:
+
 - index.html
 - style.css
 - camera.js
-- portrait.jpg
-- waterfall.jpg
-- cyclist.jpg
-- night-street.jpg
 
-This patch places the photographs in the repository root so the GitHub upload process
-does not need to preserve an `assets` folder.
+Replace the existing files and commit the changes.
 
-After uploading:
-1. Commit the changes.
-2. Wait one or two minutes for GitHub Pages.
-3. Refresh the page with Ctrl + F5.
+Progress and gallery photographs are saved only in the current browser/device.
