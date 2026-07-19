@@ -7,10 +7,10 @@ const shutterValues=[
 {label:"1/15",s:1/15},{label:"1/8",s:1/8},{label:"1/4",s:1/4},{label:"1/2",s:1/2},{label:"1s",s:1},{label:"2s",s:2}
 ];
 const scenes={
-portrait:{file:"assets/portrait.jpg",title:"Portrait — create a softly blurred background.",ref:1},
-waterfall:{file:"assets/waterfall.jpg",title:"Waterfall — create smooth water while protecting highlights.",ref:1},
-cyclist:{file:"assets/cyclist.jpg",title:"Cyclist — freeze the action with a fast shutter speed.",ref:0},
-night:{file:"assets/night-street.jpg",title:"Night street — make a bright image without excessive noise.",ref:4}
+portrait:{file:"portrait.jpg",title:"Portrait — create a softly blurred background.",ref:1},
+waterfall:{file:"waterfall.jpg",title:"Waterfall — create smooth water while protecting highlights.",ref:1},
+cyclist:{file:"cyclist.jpg",title:"Cyclist — freeze the action with a fast shutter speed.",ref:0},
+night:{file:"night-street.jpg",title:"Night street — make a bright image without excessive noise.",ref:4}
 };
 const $=id=>document.getElementById(id);
 const el={

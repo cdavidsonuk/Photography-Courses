@@ -1,23 +1,20 @@
-# Virtual Camera Lab v1.0
+# Virtual Camera Lab v1.0.1 — Image Loading Fix
 
-Upload the contents of this folder to the root of your GitHub repository.
+Upload every file in this folder directly into the root of your GitHub repository.
 
-Files:
+Required files:
 - index.html
 - style.css
 - camera.js
-- assets/portrait.jpg
-- assets/waterfall.jpg
-- assets/cyclist.jpg
-- assets/night-street.jpg
+- portrait.jpg
+- waterfall.jpg
+- cyclist.jpg
+- night-street.jpg
 
-Important: upload the entire `assets` folder as well as the three main files.
+This patch places the photographs in the repository root so the GitHub upload process
+does not need to preserve an `assets` folder.
 
-New in v1.0:
-- More realistic camera body and controls
-- Four sample photographs shown inside the rear camera display
-- Portrait, waterfall, sports and night missions
-- Live exposure, motion blur, depth-of-field and noise effects
-- Physical-style shutter button and sound
-- Captured-photo preview and score
-- Responsive mobile layout
+After uploading:
+1. Commit the changes.
+2. Wait one or two minutes for GitHub Pages.
+3. Refresh the page with Ctrl + F5.
