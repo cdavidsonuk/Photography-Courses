@@ -1,0 +1,20 @@
+[
+  {
+    "id": "a1",
+    "title": "Manual Exposure Sprint",
+    "scene": "portrait",
+    "target": 86
+  },
+  {
+    "id": "a2",
+    "title": "Dynamic Range Rescue",
+    "scene": "landscape",
+    "target": 88
+  },
+  {
+    "id": "a3",
+    "title": "Technical Final Exam",
+    "scene": "cyclist",
+    "target": 90
+  }
+]

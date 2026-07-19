@@ -1,62 +1,12 @@
+export function qs(selector, root = document) {
+  return root.querySelector(selector);
+}
 
-const images=window.SCENE_IMAGES;
-const apertureValues=[1.4,2,2.8,4,5.6,8,11,16], shutterLabels=["1/4000","1/2000","1/1000","1/500","1/250","1/125","1/60","1/30","1/15","1/8","1/4","1/2","1s"], isoValues=[100,200,400,800,1600,3200,6400], lensValues=[24,35,50,85,135,200];
-const lessons=[
-{id:"exposure",level:"beginner",scene:"landscape",title:"Exposure Basics",description:"Learn to balance aperture, shutter speed and ISO.",steps:[["Read the meter","Adjust settings until the exposure indicator is close to zero.","Start with ISO 100, f/8 and adjust shutter speed."],["Protect image quality","Keep ISO as low as practical.","Low ISO produces a cleaner image."],["Take the photograph","Capture a balanced landscape exposure.","Aim for a score of at least 80."]],ideal:{a:[4,7],s:[3,9],iso:[0,2],focus:[20,80,20,80]},time:0},
-{id:"portrait",level:"beginner",scene:"portrait",title:"Blurred Portrait Background",description:"Use aperture and focus placement to isolate a subject.",steps:[["Choose a wide aperture","Select f/2.8 or wider.","Move the aperture slider toward f/1.4."],["Focus on the subject","Tap the subject in the live view.","Place the green focus box near the centre of the person."],["Capture the portrait","Balance exposure and take the photograph.","Raise shutter speed or lower ISO if it is too bright."]],ideal:{a:[0,2],s:[0,7],iso:[0,3],focus:[25,75,15,85]},time:0},
-{id:"action",level:"intermediate",scene:"cyclist",title:"Freeze Fast Movement",description:"Use a fast shutter speed to stop action.",steps:[["Select a fast shutter","Choose 1/500 second or faster.","Use 1/500, 1/1000 or faster."],["Compensate for lost light","Open the aperture or raise ISO.","A fast shutter lets in less light."],["Beat the challenge","Focus on the cyclist and capture within the timer.","The timer begins when you start this final step."]],ideal:{a:[0,5],s:[0,3],iso:[0,4],focus:[20,80,15,85]},time:30},
-{id:"waterfall",level:"intermediate",scene:"waterfall",title:"Smooth Waterfall",description:"Use a long exposure to create silky water.",steps:[["Slow the shutter","Select 1/8 second or slower.","Move toward 1/8, 1/4, 1/2 or 1 second."],["Control brightness","Use low ISO and a smaller aperture.","Try ISO 100 and f/8 to f/16."],["Take the long exposure","Capture before the challenge timer ends.","Keep the meter close to zero."]],ideal:{a:[4,7],s:[9,12],iso:[0,2],focus:[20,80,15,85]},time:40},
-{id:"landscape",level:"advanced",scene:"landscape",title:"Sharp Landscape",description:"Create front-to-back sharpness with clean detail.",steps:[["Choose depth of field","Select f/8 to f/16.","Smaller apertures keep more of the scene sharp."],["Use clean ISO","Set ISO between 100 and 400.","Avoid unnecessary noise."],["Place focus carefully","Focus around the middle distance and capture.","Do not focus at the extreme edge of the scene."]],ideal:{a:[5,7],s:[2,9],iso:[0,2],focus:[30,70,30,75]},time:45},
-{id:"night",level:"advanced",scene:"night",title:"Night Photography",description:"Balance low-light exposure with acceptable image noise.",steps:[["Open the aperture","Choose f/1.4 to f/4.","A wide aperture gathers more light."],["Select sensible ISO","Use ISO 400 to 1600.","Very high ISO creates strong noise."],["Capture the city","Use a slower shutter and complete the lesson.","Keep exposure near zero without using ISO 6400."]],ideal:{a:[0,3],s:[6,11],iso:[2,4],focus:[15,85,15,85]},time:45}
-];
-let current=0, step=0, focus={x:50,y:50}, timerId=null, timeLeft=0, latestCapture=null;
-let progress=JSON.parse(localStorage.getItem("vc22-progress")||"{}");
-let gallery=JSON.parse(localStorage.getItem("vc22-gallery")||"[]");
-const $=id=>document.getElementById(id), c={a:$("aperture"),s:$("shutter"),i:$("iso"),l:$("lens"),m:$("mode"),wb:$("whiteBalance")};
+export function qsa(selector, root = document) {
+  return [...root.querySelectorAll(selector)];
+}
 
-function starsFor(score){return score>=90?3:score>=80?2:score>=65?1:0}
-function saveProgress(){localStorage.setItem("vc22-progress",JSON.stringify(progress))}
-function updateTotals(){const vals=Object.values(progress);$("passedCount").textContent=`${vals.filter(x=>x.best>=80).length} / 6`;$("starCount").textContent=`${vals.reduce((n,x)=>n+(x.stars||0),0)} / 18`}
-function buildLessons(filter="all"){
- const host=$("lessonButtons");host.innerHTML="";
- lessons.forEach((l,i)=>{const p=progress[l.id]||{};const b=document.createElement("button");b.className="lesson-button"+(i===current?" active":"")+(filter!=="all"&&l.level!==filter?" hidden":"");b.innerHTML=`<div class="row"><strong>${l.title}</strong><span class="stars">${"★".repeat(p.stars||0)}${"☆".repeat(3-(p.stars||0))}</span></div><small>${l.level} • ${p.best?"Best "+p.best:"Not attempted"}</small>`;b.onclick=()=>loadLesson(i);host.appendChild(b)});updateTotals()
+export function setText(selector, value) {
+  const element = qs(selector);
+  if (element) element.textContent = value;
 }
-function loadLesson(i){
- current=i;step=0;stopTimer();const l=lessons[i];focus={x:50,y:50};$("sceneImage").src=images[l.scene];$("lessonLevel").textContent=l.level;$("lessonTitle").textContent=l.title;$("lessonDescription").textContent=l.description;$("lessonBest").textContent=`Best: ${progress[l.id]?.best??"—"}`;$("lessonStars").textContent="★".repeat(progress[l.id]?.stars||0)+"☆".repeat(3-(progress[l.id]?.stars||0));$("latestScore").textContent="—";$("latestStars").textContent="—";$("passStatus").textContent="Not attempted";$("captureFrame").classList.add("empty");$("saveCapture").disabled=true;resetSettings();showStep();buildLessons(document.querySelector(".difficulty-tabs .active").dataset.level)
-}
-function showStep(){
- const l=lessons[current],s=l.steps[step];$("stepCounter").textContent=`Step ${step+1} of ${l.steps.length}`;$("stepBar").style.width=`${(step+1)/l.steps.length*100}%`;$("stepTitle").textContent=s[0];$("stepText").textContent=s[1];$("hintText").textContent=s[2];$("hintText").classList.add("hidden");$("hintButton").textContent="Show hint";$("nextStep").textContent=step===l.steps.length-1?"Start challenge":"Next step";
- if(step===l.steps.length-1&&l.time>0)startTimer(l.time);else if(step<l.steps.length-1)stopTimer()
-}
-function startTimer(seconds){stopTimer();timeLeft=seconds;$("timer").textContent=timeLeft+"s";timerId=setInterval(()=>{timeLeft--;$("timer").textContent=Math.max(0,timeLeft)+"s";if(timeLeft<=0){stopTimer();$("feedbackTitle").textContent="Time is up";$("feedbackText").textContent="Press Retry to restart this lesson challenge."}},1000)}
-function stopTimer(){if(timerId)clearInterval(timerId);timerId=null;$("timer").textContent="—"}
-function exposure(){return (4.5-(+c.a.value))*.42+(6-(+c.s.value))*.38+((+c.i.value)-2)*.55}
-function render(){
- const a=+c.a.value,s=+c.s.value,i=+c.i.value,l=+c.l.value,e=exposure(),wb=c.wb.value;
- $("modeWheel").textContent=$("hudMode").textContent=c.m.value;$("apertureOutput").value=$("hudAperture").textContent=`F${apertureValues[a]}`;$("shutterOutput").value=$("hudShutter").textContent=shutterLabels[s];$("isoOutput").value=isoValues[i];$("hudIso").textContent=`ISO ${isoValues[i]}`;$("lensOutput").value=`${lensValues[l]}mm`;$("hudLens").textContent=`${lensValues[l]}mm`;$("hudExposure").textContent=(e>=0?"+":"")+e.toFixed(1);$("meterNeedle").style.left=`${Math.max(0,Math.min(100,50+e*15))}%`;
- let temp=wb==="cloudy"?"sepia(.16) saturate(1.08)":wb==="shade"?"sepia(.25) saturate(1.12)":wb==="tungsten"?"sepia(.08) hue-rotate(175deg) saturate(.9)":wb==="daylight"?"saturate(1.08)":"";
- $("sceneImage").style.filter=`brightness(${Math.max(.22,1+e*.23)}) ${temp}`;$("sceneImage").style.transform=`scale(${1+l*.035})`;
- const depth=Math.max(0,(4-a)*1.1)*(lensValues[l]/50);$("depthEffect").style.backdropFilter=`blur(${Math.min(5,depth*.26)}px)`;$("depthEffect").style.maskImage=`radial-gradient(circle 90px at ${focus.x}% ${focus.y}%,transparent 0 55%,black 100%)`;$("depthEffect").style.webkitMaskImage=$("depthEffect").style.maskImage;
- const moving=["waterfall","cyclist","wildlife"].includes(lessons[current].scene),motion=moving?Math.max(0,(s-4)*.8):Math.max(0,(s-7)*.45);$("motionEffect").style.backdropFilter=`blur(${motion}px)`;$("motionEffect").style.opacity=motion>0?1:0;
- $("noiseEffect").style.opacity=Math.max(0,(i-2)*.08);$("noiseEffect").style.backgroundImage=`url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.65'/%3E%3C/svg%3E")`;$("focusPoint").style.left=focus.x+"%";$("focusPoint").style.top=focus.y+"%"
-}
-function score(){
- const l=lessons[current],o=l.ideal,a=+c.a.value,s=+c.s.value,i=+c.i.value;let n=100-Math.round(Math.abs(exposure())*19);if(a<o.a[0]||a>o.a[1])n-=18;if(s<o.s[0]||s>o.s[1])n-=23;if(i<o.iso[0]||i>o.iso[1])n-=14;const [xmin,xmax,ymin,ymax]=o.focus;if(focus.x<xmin||focus.x>xmax||focus.y<ymin||focus.y>ymax)n-=10;if(l.time>0&&timeLeft<=0)n-=15;return Math.max(0,Math.min(100,n))}
-function capture(){
- const n=score(),stars=starsFor(n),l=lessons[current];stopTimer();const old=progress[l.id]||{best:0,stars:0};progress[l.id]={best:Math.max(old.best,n),stars:Math.max(old.stars,stars)};saveProgress();$("latestScore").textContent=n;$("latestStars").textContent="★".repeat(stars)+"☆".repeat(3-stars);$("passStatus").textContent=n>=80?"Passed":"Retry needed";$("lessonBest").textContent=`Best: ${progress[l.id].best}`;$("lessonStars").textContent="★".repeat(progress[l.id].stars)+"☆".repeat(3-progress[l.id].stars);
- if(n>=90){$("feedbackTitle").textContent="Excellent — three-star result";$("feedbackText").textContent="Your exposure, focus and creative settings are all well matched to the lesson."}else if(n>=80){$("feedbackTitle").textContent="Lesson passed";$("feedbackText").textContent="Strong work. Refine one setting to earn all three stars."}else if(Math.abs(exposure())>1){$("feedbackTitle").textContent="Exposure needs attention";$("feedbackText").textContent="Move the exposure indicator closer to zero, then retry."}else{$("feedbackTitle").textContent="Review the lesson objective";$("feedbackText").textContent="Use the hint and check aperture, shutter speed, ISO and focus placement."}
- $("captureFrame").classList.remove("empty");$("captureImage").src=images[l.scene];$("captureImage").style.filter=$("sceneImage").style.filter;$("captureImage").style.transform=$("sceneImage").style.transform;$("captureFx").style.cssText=$("noiseEffect").style.cssText;$("captureMeta").textContent=`${l.title} • ${shutterLabels[+c.s.value]} • F${apertureValues[+c.a.value]} • ISO ${isoValues[+c.i.value]} • ${lensValues[+c.l.value]}mm • ${n}/100`;latestCapture={scene:l.scene,title:l.title,score:n,meta:$("captureMeta").textContent};$("saveCapture").disabled=false;$("screen").classList.remove("flash");void $("screen").offsetWidth;$("screen").classList.add("flash");buildLessons(document.querySelector(".difficulty-tabs .active").dataset.level)
-}
-function resetSettings(){c.m.value="M";c.a.value=5;c.s.value=5;c.i.value=0;c.l.value=1;c.wb.value="auto";focus={x:50,y:50};render()}
-function renderGallery(){const host=$("galleryGrid");host.innerHTML=gallery.length?gallery.map(x=>`<div class="gallery-item"><img src="${images[x.scene]}" alt=""><strong>${x.title}</strong><small>${x.meta}</small></div>`).join(""):"<p>No saved photographs yet.</p>"}
-document.querySelectorAll("input,select").forEach(x=>x.addEventListener("input",render));
-document.querySelectorAll("[data-step-control]").forEach(b=>b.onclick=()=>{const [name,d]=b.dataset.stepControl.split(":"),el=name==="aperture"?c.a:c.s;el.value=Math.max(+el.min,Math.min(+el.max,+el.value+(+d)));render()});
-$("screen").onclick=e=>{const r=$("screen").getBoundingClientRect();focus.x=Math.max(3,Math.min(97,(e.clientX-r.left)/r.width*100));focus.y=Math.max(5,Math.min(92,(e.clientY-r.top)/r.height*100));render()};
-$("nextStep").onclick=()=>{if(step<lessons[current].steps.length-1){step++;showStep()}else if(lessons[current].time>0)startTimer(lessons[current].time)};
-$("hintButton").onclick=()=>{$("hintText").classList.toggle("hidden");$("hintButton").textContent=$("hintText").classList.contains("hidden")?"Show hint":"Hide hint"};
-$("captureButton").onclick=capture;$("physicalShutter").onclick=capture;$("retryButton").onclick=()=>loadLesson(current);$("resetSettings").onclick=resetSettings;
-$("saveCapture").onclick=()=>{if(!latestCapture)return;gallery.unshift(latestCapture);gallery=gallery.slice(0,12);localStorage.setItem("vc22-gallery",JSON.stringify(gallery));$("saveCapture").textContent="Saved";setTimeout(()=>$("saveCapture").textContent="Save to gallery",1000)};
-$("openGallery").onclick=()=>{renderGallery();$("galleryDialog").showModal()};$("closeGallery").onclick=()=>$("galleryDialog").close();$("clearGallery").onclick=()=>{gallery=[];localStorage.removeItem("vc22-gallery");renderGallery()};
-$("resetProgress").onclick=()=>{if(confirm("Reset all lesson scores and stars?")){progress={};saveProgress();loadLesson(0)}};
-document.querySelectorAll(".difficulty-tabs button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".difficulty-tabs button").forEach(x=>x.classList.toggle("active",x===b));buildLessons(b.dataset.level)});
-buildLessons();loadLesson(0);

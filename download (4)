@@ -1,0 +1,38 @@
+# PhotographyCourses Virtual Camera 4.1
+
+A structured production prototype containing:
+
+- Interactive 3D camera
+- Exposure and image-quality simulation
+- Structured photography academy
+- Timed challenges, scores, stars and achievements
+- Browser-saved progress
+- Photography coaching interface
+- Spoken advice through browser speech synthesis
+
+## Structure
+
+```text
+index.html
+css/
+js/
+assets/
+lessons/
+docs/
+```
+
+Version 4.1 preserves the working Version 4 code while introducing a maintainable project structure and clear future module boundaries.
+
+## Local testing
+
+Run a local web server:
+
+```bash
+python -m http.server 8080
+```
+
+Then visit `http://localhost:8080`.
+
+## GitHub Pages
+
+Upload the contents of this project folder to the repository root.
