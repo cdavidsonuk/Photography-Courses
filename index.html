@@ -2,77 +2,132 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0b0d10">
-  <title>Virtual Camera Lab v0.5</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#08090b">
+  <title>Virtual Camera Lab v1.0</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="app">
-    <header class="topbar">
+  <main class="page">
+    <header class="site-header">
       <div>
-        <p class="kicker">PhotographyCourses.com</p>
-        <h1>Virtual Camera Lab <span>v0.5</span></h1>
+        <p class="eyebrow">PhotographyCourses.com</p>
+        <h1>Virtual Camera <span>1.0</span></h1>
       </div>
-      <div class="top-actions">
-        <button id="soundToggle" class="secondary">Sound: On</button>
-        <button id="helpBtn" class="secondary">Help</button>
+      <div class="header-actions">
+        <button id="guideBtn" class="small-btn">Guide</button>
+        <button id="soundBtn" class="small-btn">Sound on</button>
       </div>
     </header>
 
-    <section class="mission">
+    <section class="lesson-bar">
       <div>
-        <p class="kicker">Current mission</p>
-        <h2 id="missionTitle">Portrait: blur the background and keep the exposure balanced.</h2>
+        <p class="eyebrow">Practice scene</p>
+        <h2 id="missionTitle">Portrait — create a softly blurred background.</h2>
       </div>
-      <div class="mission-meta">
-        <label for="sceneSelect">Scene</label>
-        <select id="sceneSelect">
-          <option value="portrait">Portrait</option>
-          <option value="cyclist">Moving cyclist</option>
-          <option value="night">Night street</option>
-        </select>
-      </div>
+      <select id="sceneSelect">
+        <option value="portrait">Portrait</option>
+        <option value="waterfall">Waterfall</option>
+        <option value="cyclist">Cyclist</option>
+        <option value="night">Night street</option>
+      </select>
     </section>
 
-    <section class="camera-shell" aria-label="Interactive virtual camera">
-      <div class="camera-top">
-        <div class="camera-brand">PC LAB</div>
+    <section class="camera-wrap">
+      <div class="camera">
+        <div class="camera-top">
+          <div class="shoulder left-shoulder">
+            <div class="mode-wheel">
+              <button class="mode-button active" data-mode="M">M</button>
+              <button class="mode-button" data-mode="A">A</button>
+              <button class="mode-button" data-mode="S">S</button>
+              <button class="mode-button" data-mode="AUTO">Auto</button>
+            </div>
+          </div>
 
-        <div class="top-lcd">
-          <strong id="lcdMode">M</strong>
-          <span id="lcdShutter">1/250</span>
-          <span id="lcdAperture">f/5.6</span>
-          <span>ISO <b id="lcdIso">200</b></span>
-          <span id="lcdLens">50mm</span>
+          <div class="prism">
+            <span>PC</span>
+            <small>PRO 1</small>
+          </div>
+
+          <div class="shoulder right-shoulder">
+            <div class="top-screen">
+              <b id="topMode">M</b>
+              <span id="topShutter">1/250</span>
+              <span id="topAperture">F5.6</span>
+              <span>ISO <b id="topIso">200</b></span>
+            </div>
+            <button id="shutterBtn" class="shutter-button" aria-label="Take photo"></button>
+          </div>
         </div>
 
-        <button id="physicalShutter" class="physical-shutter" aria-label="Take photo"></button>
-      </div>
+        <div class="camera-body">
+          <aside class="left-panel">
+            <button class="round-button">MENU</button>
+            <button class="round-button">WB</button>
+            <button class="round-button">AF</button>
 
-      <div class="camera-main">
-        <aside class="controls left">
-          <div class="control-card">
-            <span class="label">Mode</span>
-            <div class="mode-grid">
-              <button class="mode active" data-mode="M">M</button>
-              <button class="mode" data-mode="A">A</button>
-              <button class="mode" data-mode="S">S</button>
-              <button class="mode" data-mode="AUTO">Auto</button>
+            <div class="setting-block">
+              <label>ISO</label>
+              <button class="adjust" data-control="iso" data-dir="1">+</button>
+              <div id="isoDial" class="dial"><i></i><strong id="isoValue">200</strong></div>
+              <button class="adjust" data-control="iso" data-dir="-1">−</button>
             </div>
-          </div>
+          </aside>
 
-          <div class="control-card">
-            <span class="label">ISO</span>
-            <div class="dial-row">
-              <button class="step" data-control="iso" data-dir="-1">−</button>
-              <div id="isoDial" class="dial"><span></span><b id="isoValue">200</b></div>
-              <button class="step" data-control="iso" data-dir="1">+</button>
+          <section class="rear-screen">
+            <div id="liveView" class="live-view">
+              <img id="sceneImage" src="assets/portrait.jpg" alt="Camera scene preview">
+              <div id="blurLayer" class="blur-layer"></div>
+              <div id="motionLayer" class="motion-layer"></div>
+              <div id="noiseLayer" class="noise-layer"></div>
+              <div class="screen-vignette"></div>
+
+              <div class="hud top-hud">
+                <span id="sceneLabel">PORTRAIT</span>
+                <span>RAW</span>
+                <span id="battery">▰▰▰</span>
+              </div>
+
+              <div class="focus-box"><span></span><span></span><span></span><span></span></div>
+
+              <div class="meter">
+                <div class="meter-labels">
+                  <span>-3</span><span>-2</span><span>-1</span><span>0</span><span>+1</span><span>+2</span><span>+3</span>
+                </div>
+                <div class="meter-track"><i id="meterNeedle"></i></div>
+              </div>
+
+              <div class="hud bottom-hud">
+                <strong id="hudMode">M</strong>
+                <span id="hudShutter">1/250</span>
+                <span id="hudAperture">F5.6</span>
+                <span>ISO <b id="hudIso">200</b></span>
+                <span id="hudLens">50mm</span>
+              </div>
             </div>
-          </div>
 
-          <div class="control-card">
-            <span class="label">Lens</span>
+            <div class="screen-info">
+              <span id="exposureText">Exposure balanced</span>
+              <span id="effectText">Clean image</span>
+            </div>
+          </section>
+
+          <aside class="right-panel">
+            <div class="rear-wheel">
+              <button class="wheel-btn up" data-control="aperture" data-dir="1">▲</button>
+              <button class="wheel-btn left" data-control="shutter" data-dir="-1">◀</button>
+              <button class="wheel-center">SET</button>
+              <button class="wheel-btn right" data-control="shutter" data-dir="1">▶</button>
+              <button class="wheel-btn down" data-control="aperture" data-dir="-1">▼</button>
+            </div>
+
+            <div class="mini-readout">
+              <span>Aperture <b id="apertureValue">F5.6</b></span>
+              <span>Shutter <b id="shutterValue">1/250</b></span>
+            </div>
+
+            <label class="lens-label" for="lensSelect">Lens</label>
             <select id="lensSelect">
               <option value="24">24mm</option>
               <option value="35">35mm</option>
@@ -80,111 +135,54 @@
               <option value="85">85mm</option>
               <option value="200">200mm</option>
             </select>
-          </div>
-        </aside>
-
-        <section class="screen-panel">
-          <div class="viewfinder">
-            <div id="scene" class="scene portrait">
-              <div class="sky"></div>
-              <div class="hills"></div>
-              <div class="ground"></div>
-              <div class="street-lamps"></div>
-              <div class="subject">
-                <div class="head"></div>
-                <div class="body"></div>
-              </div>
-              <div class="cyclist"><div class="wheel w1"></div><div class="wheel w2"></div><div class="bike"></div></div>
-              <div class="noise"></div>
-              <div class="motion"></div>
-              <div class="vignette"></div>
-            </div>
-
-            <div class="focus-box"></div>
-
-            <div class="hud top">
-              <span id="hudScene">PORTRAIT</span>
-              <span id="hudMode">M</span>
-            </div>
-
-            <div class="hud bottom">
-              <span id="hudShutter">1/250</span>
-              <span id="hudAperture">f/5.6</span>
-              <span>ISO <b id="hudIso">200</b></span>
-              <span id="hudLens">50mm</span>
-            </div>
-
-            <div class="meter">
-              <div class="meter-labels"><span>-3</span><span>-2</span><span>-1</span><span>0</span><span>+1</span><span>+2</span><span>+3</span></div>
-              <div class="meter-track"><i id="meterNeedle"></i></div>
-            </div>
-          </div>
-
-          <div class="status-bar">
-            <span id="exposureStatus">Exposure balanced</span>
-            <span id="effectStatus">Clean image</span>
-          </div>
-        </section>
-
-        <aside class="controls right">
-          <div class="control-card">
-            <span class="label">Aperture</span>
-            <div class="dial-stack">
-              <button class="step" data-control="aperture" data-dir="1">+</button>
-              <div id="apertureDial" class="dial"><span></span><b id="apertureValue">f/5.6</b></div>
-              <button class="step" data-control="aperture" data-dir="-1">−</button>
-            </div>
-          </div>
-
-          <div class="control-card">
-            <span class="label">Shutter</span>
-            <div class="dial-stack">
-              <button class="step" data-control="shutter" data-dir="1">+</button>
-              <div id="shutterDial" class="dial"><span></span><b id="shutterValue">1/250</b></div>
-              <button class="step" data-control="shutter" data-dir="-1">−</button>
-            </div>
-          </div>
-        </aside>
-      </div>
-
-      <div class="camera-bottom">
-        <button id="takePhoto" class="primary">Take photo</button>
-      </div>
-    </section>
-
-    <section class="results">
-      <div>
-        <p class="kicker">Instructor feedback</p>
-        <h2 id="feedbackTitle">Set the camera, then take a photograph.</h2>
-        <p id="feedbackText">Aim for the centre of the exposure meter while meeting the scene objective.</p>
-      </div>
-
-      <div class="score">
-        <span>Score</span>
-        <strong id="scoreValue">—</strong>
-      </div>
-    </section>
-
-    <section class="history">
-      <div class="history-head">
-        <div>
-          <p class="kicker">Recent attempts</p>
-          <h2>Photo history</h2>
+          </aside>
         </div>
-        <button id="clearHistory" class="secondary">Clear</button>
+
+        <div class="camera-bottom">
+          <div class="grip-texture"></div>
+          <button id="takePhotoBtn" class="take-photo">TAKE PHOTO</button>
+          <div class="card-door">CARD</div>
+        </div>
       </div>
-      <div id="historyGrid" class="history-grid">
-        <p class="empty">No photos taken yet.</p>
+    </section>
+
+    <section class="feedback">
+      <div>
+        <p class="eyebrow">AI-style instructor feedback</p>
+        <h2 id="feedbackTitle">Adjust the settings and take a photo.</h2>
+        <p id="feedbackText">Use the meter and the scene objective to choose your settings.</p>
+      </div>
+      <div class="score-box">
+        <span>Score</span>
+        <strong id="score">—</strong>
+      </div>
+    </section>
+
+    <section class="captured">
+      <div class="captured-head">
+        <div>
+          <p class="eyebrow">Captured image</p>
+          <h2>Your latest photograph</h2>
+        </div>
+        <button id="resetBtn" class="small-btn">Reset</button>
+      </div>
+      <div class="capture-card">
+        <div id="capturePreview" class="capture-preview empty">
+          <img id="captureImage" src="assets/portrait.jpg" alt="Captured preview">
+          <div id="captureOverlay"></div>
+          <span id="capturePlaceholder">No photograph taken yet</span>
+        </div>
+        <div id="captureSettings" class="capture-settings">—</div>
       </div>
     </section>
   </main>
 
-  <dialog id="helpDialog">
-    <button id="closeHelp" class="close">×</button>
-    <h2>How to use v0.5</h2>
-    <p>Choose a scene, camera mode and lens. Adjust ISO, aperture and shutter speed using the dials.</p>
-    <p>The exposure meter reacts immediately. Press the shutter to receive a score and instructor feedback.</p>
-    <p><strong>Keyboard:</strong> I changes ISO, A changes aperture, S changes shutter speed, and Space takes a photo.</p>
+  <dialog id="guideDialog">
+    <button id="closeGuide">×</button>
+    <h2>How to use version 1.0</h2>
+    <p>Choose a sample scene, select a camera mode and adjust ISO, aperture and shutter speed.</p>
+    <p>The camera display changes in real time to simulate exposure, depth of field, motion blur and digital noise.</p>
+    <p>Press the physical shutter button or TAKE PHOTO to capture the current view and receive feedback.</p>
   </dialog>
 
   <script src="camera.js"></script>
